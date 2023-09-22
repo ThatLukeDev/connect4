@@ -27,6 +27,10 @@ namespace connect4
         Vector2 BOARD_BEGIN = new Vector2(BOARD_BEGIN_X, BOARD_BEGIN_Y);
         Texture2D[] _chipTextures = new Texture2D[2];
         Texture2D _boardTexture;
+
+        int turns = 0;
+        bool debounceLeft = false;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -42,8 +46,6 @@ namespace connect4
             for (int i = 0; i < board.Length; i++)
             {
                 board[i] = new byte[6];
-                board[i][0] = 1;
-                board[i][1] = 2;
             }
         }
 
@@ -63,8 +65,31 @@ namespace connect4
                 Exit();
 
             // TODO: Add your update logic here
+            KeyboardState keyboard = Keyboard.GetState();
+            MouseState mouse = Mouse.GetState();
 
             base.Update(gameTime);
+
+            if (mouse.LeftButton == ButtonState.Pressed && !debounceLeft)
+            {
+                debounceLeft = true;
+                int relativeX = mouse.X - BOARD_BEGIN_X;
+                if (relativeX > 0 && relativeX < BOARD_SIZE_X && mouse.Y > 0 && mouse.Y < Window.ClientBounds.Height)
+                {
+                    int column = relativeX / (CHIP_SIZE_X + CHIP_OFFSET_X);
+                    for (int i = 0; i < board[column].Length; i++)
+                    {
+                        if (board[column][i] == 0)
+                        {
+                            board[column][i] = (byte)(turns % 2 + 1);
+                            turns++;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (mouse.LeftButton == ButtonState.Released && debounceLeft)
+                debounceLeft = false;
         }
 
         protected override void Draw(GameTime gameTime)
