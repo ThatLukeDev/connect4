@@ -81,7 +81,14 @@ namespace connect4
                 {
                     if (board[i][j] != 0)
                     {
-                        spriteBatch.Draw(_chipTextures[board[i][j] - 1], new Rectangle(CHIP_BEGIN_X + i * (CHIP_SIZE_X + CHIP_OFFSET_X), CHIP_BEGIN_Y + j * (CHIP_SIZE_Y + CHIP_OFFSET_Y), CHIP_SIZE_X, CHIP_SIZE_Y), Color.White);
+                        spriteBatch.Draw(
+                            _chipTextures[board[i][j] - 1], 
+                            new Rectangle(
+                                CHIP_BEGIN_X + i * (CHIP_SIZE_X + CHIP_OFFSET_X), 
+                                CHIP_BEGIN_Y + (board[i].Length - j - 1) * (CHIP_SIZE_Y + CHIP_OFFSET_Y), 
+                                CHIP_SIZE_X, 
+                                CHIP_SIZE_Y
+                            ), Color.White);
                     }
                 }
             }
