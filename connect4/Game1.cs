@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.IO;
 
-namespace connect_4
+namespace connect4
 {
     public class Game1 : Game
     {
