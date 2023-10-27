@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.IO;
 
-namespace connect4
+namespace connect_4
 {
     public class Game1 : Game
     {
@@ -89,6 +89,15 @@ namespace connect4
                     for (int i = 0; i < 4; i++)
                     {
                         byte[] pos = { (byte)(dirX * i + lastPos[0]), (byte)(dirY * i + lastPos[1]) };
+                        if (pos[0] < 0 || pos[0] > board.Length - 1 || pos[1] < 0 || pos[1] > board[0].Length - 1)
+                            break;
+                        if (board[pos[0]][pos[1]] != check)
+                            break;
+                        counter++;
+                    }
+                    for (int i = 1; i < 4; i++)
+                    {
+                        byte[] pos = { (byte)(dirX * (-i) + lastPos[0]), (byte)(dirY * (-i) + lastPos[1]) };
                         if (pos[0] < 0 || pos[0] > board.Length - 1 || pos[1] < 0 || pos[1] > board[0].Length - 1)
                             break;
                         if (board[pos[0]][pos[1]] != check)
