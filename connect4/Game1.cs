@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Data.Common;
 using System.IO;
 
 namespace connect4
@@ -11,6 +12,8 @@ namespace connect4
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        Random rnd = new Random();
+        bool doAI = false;
         public byte[][] board = new byte[7][];
         const int SCREEN_WIDTH = 800;
         const int SCREEN_HEIGHT = 480;
@@ -86,23 +89,15 @@ namespace connect4
                     if (dirX == 0 && dirY == 0)
                         break;
                     int counter = 0;
-                    for (int i = 0; i < 4; i++)
+                    for (int i = -4; i < 4; i++)
                     {
                         byte[] pos = { (byte)(dirX * i + lastPos[0]), (byte)(dirY * i + lastPos[1]) };
                         if (pos[0] < 0 || pos[0] > board.Length - 1 || pos[1] < 0 || pos[1] > board[0].Length - 1)
-                            break;
+                            continue;
                         if (board[pos[0]][pos[1]] != check)
-                            break;
-                        counter++;
-                    }
-                    for (int i = 1; i < 4; i++)
-                    {
-                        byte[] pos = { (byte)(dirX * (-i) + lastPos[0]), (byte)(dirY * (-i) + lastPos[1]) };
-                        if (pos[0] < 0 || pos[0] > board.Length - 1 || pos[1] < 0 || pos[1] > board[0].Length - 1)
-                            break;
-                        if (board[pos[0]][pos[1]] != check)
-                            break;
-                        counter++;
+                            counter = 0;
+                        else
+                            counter++;
                     }
                     if (counter > 3)
                         return check;
@@ -148,6 +143,9 @@ namespace connect4
                     }
                     */
                 }
+                else if (mouse.X > CHIP_OFFSET_X && mouse.X < CHIP_OFFSET_X + CHIP_SIZE_X
+                    &&   mouse.Y > BOARD_SIZE_Y - CHIP_SIZE_Y && mouse.Y < BOARD_SIZE_Y)
+                    doAI = !doAI;
             }
             if (mouse.LeftButton == ButtonState.Released && debounceLeft)
                 debounceLeft = false;
@@ -156,6 +154,18 @@ namespace connect4
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.AntiqueWhite);
+
+            while (doAI && turns % 2 == 1 && frames > checkWinnerFrame && win == 0)
+            {
+                int column = rnd.Next(0,7);
+                if (board[column][5] == 0)
+                {
+                    board[column][5] = (byte)(turns % 2 + 1);
+                    turns++;
+                    lastPlayedCol = column;
+                    checkWinnerFrame = frames + 30;
+                }
+            }
 
             // TODO: Add your drawing code here
             if (frames % 4 == 0)
@@ -177,6 +187,7 @@ namespace connect4
 
             SpriteBatch spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteBatch.Begin();
+            spriteBatch.DrawString(_fontLarge,"AI", new Vector2(CHIP_OFFSET_X,BOARD_SIZE_Y-CHIP_SIZE_Y), doAI ? Color.White : Color.Black);
 
             for (int i = 0; i < board.Length; i++)
             {
