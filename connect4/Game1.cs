@@ -105,6 +105,53 @@ namespace connect4
             }
             return (byte)0;
         }
+        public int bestPos(byte[][] board, byte plr)
+        {
+            for (int i4 = 0; i4 < board.Length; i4++)
+            {
+                for (int j4 = 0; j4 < board[0].Length; j4++)
+                {
+                    int[] lastPos = { i4, j4 };
+                    byte check = plr;
+                    Vector2 bestPos = new Vector2(-1, -1);
+                    if (check == 0)
+                        return -1;
+                    for (int dirX = -1; dirX < 2; dirX += 1)
+                    {
+                        for (int dirY = -1; dirY < 2; dirY += 1)
+                        {
+                            if (dirX == 0 && dirY == 0)
+                                break;
+                            int counter = 0;
+                            for (int i = -4; i < 4; i++)
+                            {
+                                byte[] pos = { (byte)(dirX * i + lastPos[0]), (byte)(dirY * i + lastPos[1]) };
+                                if (pos[0] < 0 || pos[0] > board.Length - 1 || pos[1] < 0 || pos[1] > board[0].Length - 1)
+                                    continue;
+                                if (board[pos[0]][pos[1]] != check)
+                                {
+                                    if (bestPos == new Vector2(-1, -1) && board[pos[0]][pos[1]] == 0)
+                                    {
+                                        bestPos = new Vector2(pos[0], pos[1]);
+                                        counter++;
+                                    }
+                                    else
+                                    {
+                                        bestPos = new Vector2(-1, -1);
+                                        counter = 0;
+                                    }
+                                }
+                                else
+                                    counter++;
+                            }
+                            if (counter > 3)
+                                return Convert.ToInt32(bestPos.X);
+                        }
+                    }
+                }
+            }
+            return -1;
+        }
 
         protected override void Update(GameTime gameTime)
         {
@@ -157,7 +204,13 @@ namespace connect4
 
             while (doAI && turns % 2 == 1 && frames > checkWinnerFrame && win == 0)
             {
+                int bestColumn = bestPos(board, 2);
+                int bestColumn2 = bestPos(board, 1);
                 int column = rnd.Next(0,7);
+                if (bestColumn2 != -1 && board[bestColumn2][5] == 0)
+                    column = bestColumn2;
+                if (bestColumn != -1 && board[bestColumn][5] == 0)
+                    column = bestColumn;
                 if (board[column][5] == 0)
                 {
                     board[column][5] = (byte)(turns % 2 + 1);
