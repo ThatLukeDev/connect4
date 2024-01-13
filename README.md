@@ -1,6 +1,6 @@
 # Connect 4
 ### A short connect 4 game, made with monogame in C#.
-![Connect 4 board](null)
+![Connect 4 board](https://github.com/ThatLukeDev/connect4/assets/76230394/7495447f-1187-454a-87a6-623b7faa2ae4)
 
 ---
 
