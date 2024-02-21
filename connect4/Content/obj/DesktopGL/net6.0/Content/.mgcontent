@@ -4,11 +4,13 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/luke/source/repos/connect4/connect4/Content/board.png</File>
-    <File>C:/Users/luke/source/repos/connect4/connect4/Content/ChipRed.png</File>
-    <File>C:/Users/luke/source/repos/connect4/connect4/Content/ChipYellow.png</File>
+    <File>C:/Users/luke/Downloads/connect4-main/connect4-main/connect4/Content/board.png</File>
+    <File>C:/Users/luke/Downloads/connect4-main/connect4-main/connect4/Content/ChipRed.png</File>
+    <File>C:/Users/luke/Downloads/connect4-main/connect4-main/connect4/Content/ChipYellow.png</File>
+    <File>C:/Users/luke/Downloads/connect4-main/connect4-main/connect4/Content/fontLarge.spritefont</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

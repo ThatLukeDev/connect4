@@ -108,11 +108,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\luke\\source\\repos\\connect4\\connect4\\connect4.csproj",
+      "projectUniqueName": "C:\\Users\\luke\\Downloads\\connect4-main\\connect4-main\\connect4\\connect4.csproj",
       "projectName": "connect4",
-      "projectPath": "C:\\Users\\luke\\source\\repos\\connect4\\connect4\\connect4.csproj",
+      "projectPath": "C:\\Users\\luke\\Downloads\\connect4-main\\connect4-main\\connect4\\connect4.csproj",
       "packagesPath": "C:\\Users\\luke\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\luke\\source\\repos\\connect4\\connect4\\obj\\",
+      "outputPath": "C:\\Users\\luke\\Downloads\\connect4-main\\connect4-main\\connect4\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -127,8 +127,8 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://www.nuget.org/api/v2": {}
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net6.0": {
@@ -171,7 +171,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
       }
     }
   }

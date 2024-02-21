@@ -109,14 +109,18 @@ namespace connect4
         {
             for (int i = 0; i < board.Length; i++)
             {
-                int h = 0;
+                int h = -1;
                 for (int j = 0; j < board[i].Length; j++)
                 {
-                    h = j;
                     if (board[i][j] == 0)
                     {
+                        h = j;
                         break;
                     }
+                }
+                if (h == -1)
+                {
+                    break;
                 }
                 byte[][] boardPtr = board;
                 boardPtr[i][h] = 1;
