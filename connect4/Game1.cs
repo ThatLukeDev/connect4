@@ -107,48 +107,31 @@ namespace connect4
         }
         public int bestPos(byte[][] board, byte plr)
         {
-            for (int i4 = 0; i4 < board.Length; i4++)
+            for (int i = 0; i < board.Length; i++)
             {
-                for (int j4 = 0; j4 < board[0].Length; j4++)
+                int h = 0;
+                for (int j = 0; j < board[i].Length; j++)
                 {
-                    int[] lastPos = { i4, j4 };
-                    byte check = plr;
-                    Vector2 bestPos = new Vector2(-1, -1);
-                    if (check == 0)
-                        return -1;
-                    for (int dirX = -1; dirX < 2; dirX += 1)
+                    h = j;
+                    if (board[i][j] == 0)
                     {
-                        for (int dirY = -1; dirY < 2; dirY += 1)
-                        {
-                            if (dirX == 0 && dirY == 0)
-                                break;
-                            int counter = 0;
-                            for (int i = -4; i < 4; i++)
-                            {
-                                byte[] pos = { (byte)(dirX * i + lastPos[0]), (byte)(dirY * i + lastPos[1]) };
-                                if (pos[0] < 0 || pos[0] > board.Length - 1 || pos[1] < 0 || pos[1] > board[0].Length - 1)
-                                    continue;
-                                if (board[pos[0]][pos[1]] != check)
-                                {
-                                    if (bestPos == new Vector2(-1, -1) && board[pos[0]][pos[1]] == 0)
-                                    {
-                                        bestPos = new Vector2(pos[0], pos[1]);
-                                        counter++;
-                                    }
-                                    else
-                                    {
-                                        bestPos = new Vector2(-1, -1);
-                                        counter = 0;
-                                    }
-                                }
-                                else
-                                    counter++;
-                            }
-                            if (counter > 3)
-                                return Convert.ToInt32(bestPos.X);
-                        }
+                        break;
                     }
                 }
+                byte[][] boardPtr = board;
+                boardPtr[i][h] = 1;
+                if (checkWinner(boardPtr, i) != 0)
+                {
+                    boardPtr[i][h] = 0;
+                    return i;
+                }
+                boardPtr[i][h] = 2;
+                if (checkWinner(boardPtr, i) != 0)
+                {
+                    boardPtr[i][h] = 0;
+                    return i;
+                }
+                boardPtr[i][h] = 0;
             }
             return -1;
         }
