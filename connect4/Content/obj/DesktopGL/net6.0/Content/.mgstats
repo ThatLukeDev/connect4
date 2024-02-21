@@ -1,0 +1,4 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/luke/source/repos/connect4/connect4/Content/board.png","C:/Users/luke/source/repos/connect4/connect4/Content/bin/DesktopGL/Content/board.xnb","TextureProcessor","Texture2DContent",5847,1228885,0.1307201
+"C:/Users/luke/source/repos/connect4/connect4/Content/ChipRed.png","C:/Users/luke/source/repos/connect4/connect4/Content/bin/DesktopGL/Content/ChipRed.xnb","TextureProcessor","Texture2DContent",18701,501349,0.0113294
+"C:/Users/luke/source/repos/connect4/connect4/Content/ChipYellow.png","C:/Users/luke/source/repos/connect4/connect4/Content/bin/DesktopGL/Content/ChipYellow.xnb","TextureProcessor","Texture2DContent",13005,501349,0.0100427
