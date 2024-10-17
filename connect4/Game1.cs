@@ -87,7 +87,7 @@ namespace connect4
                 for (int dirY = -1; dirY < 2; dirY += 1)
                 {
                     if (dirX == 0 && dirY == 0)
-                        break;
+                        continue;
                     int counter = 0;
                     for (int i = -4; i < 4; i++)
                     {
