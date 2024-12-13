@@ -3,7 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Data.Common;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace connect4
 {
@@ -12,8 +15,10 @@ namespace connect4
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        const int AI_DEPTH = 5;
+
         Random rnd = new Random();
-        bool doAI = false;
+        int aiLevel = -1;
         public byte[][] board = new byte[7][];
         const int SCREEN_WIDTH = 800;
         const int SCREEN_HEIGHT = 480;
@@ -68,76 +73,204 @@ namespace connect4
             _fontLarge = Content.Load<SpriteFont>("fontLarge");
         }
 
-        public byte checkWinner(byte[][] board, int lastCol)
+        public byte checkWinner(byte[][] board)
         {
             if (turns > 41)
                 return (byte)3;
-            int[] lastPos = { lastCol, 0 };
-            for (int i = board[lastCol].Length - 1; i > -1; i--)
+            
+            for (int x = 0; x < board.Length; x++)
             {
-                if (board[lastCol][i] != 0)
+                int counter = 0;
+                byte chip = board[x][0];
+
+                for (int y = 1; y < board[x].Length; y++)
                 {
-                    lastPos[1] = i;
-                    break;
-                }
-            }
-            byte check = board[lastPos[0]][lastPos[1]];
-            for (int dirX = -1; dirX < 2; dirX += 1)
-            {
-                for (int dirY = -1; dirY < 2; dirY += 1)
-                {
-                    if (dirX == 0 && dirY == 0)
-                        continue;
-                    int counter = 0;
-                    for (int i = -4; i < 4; i++)
+                    if (chip == board[x][y])
                     {
-                        byte[] pos = { (byte)(dirX * i + lastPos[0]), (byte)(dirY * i + lastPos[1]) };
-                        if (pos[0] < 0 || pos[0] > board.Length - 1 || pos[1] < 0 || pos[1] > board[0].Length - 1)
-                            continue;
-                        if (board[pos[0]][pos[1]] != check)
-                            counter = 0;
-                        else
-                            counter++;
+                        counter++;
                     }
-                    if (counter > 3)
-                        return check;
+                    else
+                    {
+                        counter = 0;
+                        chip = board[x][y];
+                    }
+
+                    if (counter >= 3 && chip != 0)
+                    {
+                        return chip;
+                    }
                 }
             }
+
+            for (int y = 0; y < board[0].Length; y++)
+            {
+                int counter = 0;
+                byte chip = board[0][y];
+
+                for (int x = 1; x < board.Length; x++)
+                {
+                    if (chip == board[x][y])
+                    {
+                        counter++;
+                    }
+                    else
+                    {
+                        counter = 0;
+                        chip = board[x][y];
+                    }
+
+                    if (counter >= 3 && chip != 0)
+                    {
+                        return chip;
+                    }
+                }
+            }
+
+            for (int x = 0; x < board.Length; x++)
+            {
+                for (int y = 0; y < 2; y++)
+                {
+                    int counter1 = 0;
+                    int counter2 = 0;
+                    byte chip1 = board[x][y];
+                    byte chip2 = board[x][y];
+
+                    for (int diag = 1; diag < 4; diag++)
+                    {
+                        if (x + diag < board.Length && chip1 == board[x + diag][y + diag])
+                        {
+                            counter1++;
+                        }
+                        else
+                        {
+                            counter1 = 0;
+                            chip1 = board[x][y + diag];
+                        }
+                        if (x - diag >= 0 && chip2 == board[x - diag][y + diag])
+                        {
+                            counter2++;
+                        }
+                        else
+                        {
+                            counter2 = 0;
+                            chip2 = board[x][y + diag];
+                        }
+
+                        if (counter1 >= 3 && chip1 != 0)
+                        {
+                            return chip1;
+                        }
+                        if (counter2 >= 3 && chip2 != 0)
+                        {
+                            return chip2;
+                        }
+                    }
+                }
+            }
+
             return (byte)0;
         }
-        public int bestPos(byte[][] board, byte plr)
+
+        public int recurPositions(byte[][] board, byte plr, int eval, int depth, int maxdepth)
         {
-            for (int i = 0; i < board.Length; i++)
+            byte winner = checkWinner(board);
+            if (winner == plr)
             {
-                int h = -1;
-                for (int j = 0; j < board[i].Length; j++)
+                return eval + 100000000 / (depth + 1);
+            }
+            if (winner != 0)
+            {
+                return eval + -100000000 / (depth + 1);
+            }
+            if (depth > maxdepth)
+            {
+                return eval;
+            }
+
+            byte currentPlr = (byte)((plr - 1 + depth) % 2 + 1);
+
+            int bestEval = currentPlr == plr ? -2147483648 : 2147483647;
+
+            for (int x = 0; x < board.Length; x++)
+            {
+                byte[][] newBoard = new byte[board.Length][];
+                for (int i = 0; i < newBoard.Length; i++)
+                    newBoard[i] = (byte[])board[i].Clone();
+
+                int y = -1;
+                for (int row = 0; row < board[x].Length; row++)
                 {
-                    if (board[i][j] == 0)
+                    if (board[x][row] == 0)
                     {
-                        h = j;
+                        y = row;
                         break;
                     }
                 }
-                if (h == -1)
+
+                if (y == -1)
+                    continue;
+
+                newBoard[x][y] = currentPlr;
+                int currentEval = recurPositions(newBoard, plr, eval, depth + 1, maxdepth);
+
+                if (currentPlr == plr)
                 {
-                    break;
+                    if (currentEval > bestEval)
+                    {
+                        bestEval = currentEval;
+                    }
                 }
-                byte[][] boardPtr = board;
-                boardPtr[i][h] = 1;
-                if (checkWinner(boardPtr, i) != 0)
+                else
                 {
-                    boardPtr[i][h] = 0;
-                    return i;
+                    if (currentEval < bestEval)
+                    {
+                        bestEval = currentEval;
+                    }
                 }
-                boardPtr[i][h] = 2;
-                if (checkWinner(boardPtr, i) != 0)
-                {
-                    boardPtr[i][h] = 0;
-                    return i;
-                }
-                boardPtr[i][h] = 0;
             }
-            return -1;
+
+            return bestEval + eval;
+        }
+
+        public int bestPos(byte[][] board, byte plr)
+        {
+            int bestEval = -2147483648;
+            List<int> bestPos = new List<int>();
+
+            for (int x = 0; x < board.Length; x++)
+            {
+                byte[][] newBoard = new byte[board.Length][];
+                for (int i = 0; i < newBoard.Length; i++)
+                    newBoard[i] = (byte[])board[i].Clone();
+
+                int y = -1;
+                for (int row = 0; row < board[x].Length; row++)
+                {
+                    if (board[x][row] == 0)
+                    {
+                        y = row;
+                        break;
+                    }
+                }
+
+                if (y == -1)
+                    continue;
+
+                newBoard[x][y] = plr;
+                int currentEval = recurPositions(newBoard, plr, 0, 1, aiLevel);
+
+                if (currentEval > bestEval)
+                {
+                    bestEval = currentEval;
+                    bestPos.Clear();
+                }
+                if (currentEval == bestEval)
+                {
+                    bestPos.Add(x);
+                }
+            }
+
+            return bestPos[rnd.Next(bestPos.Count)];
         }
 
         protected override void Update(GameTime gameTime)
@@ -179,7 +312,7 @@ namespace connect4
                 }
                 else if (mouse.X > CHIP_OFFSET_X && mouse.X < CHIP_OFFSET_X + CHIP_SIZE_X
                     &&   mouse.Y > BOARD_SIZE_Y - CHIP_SIZE_Y && mouse.Y < BOARD_SIZE_Y)
-                    doAI = !doAI;
+                    aiLevel = (aiLevel + 2) % (AI_DEPTH + 2) - 1;
             }
             if (mouse.LeftButton == ButtonState.Released && debounceLeft)
                 debounceLeft = false;
@@ -189,15 +322,9 @@ namespace connect4
         {
             GraphicsDevice.Clear(Color.AntiqueWhite);
 
-            while (doAI && turns % 2 == 1 && frames > checkWinnerFrame && win == 0)
+            while (aiLevel > -1 && turns % 2 == 1 && frames > checkWinnerFrame && win == 0)
             {
-                int bestColumn = bestPos(board, 2);
-                int bestColumn2 = bestPos(board, 1);
-                int column = rnd.Next(0,7);
-                if (bestColumn2 != -1 && board[bestColumn2][5] == 0)
-                    column = bestColumn2;
-                if (bestColumn != -1 && board[bestColumn][5] == 0)
-                    column = bestColumn;
+                int column = bestPos(board, 2);
                 if (board[column][5] == 0)
                 {
                     board[column][5] = (byte)(turns % 2 + 1);
@@ -222,12 +349,12 @@ namespace connect4
                 }
             if (frames == checkWinnerFrame)
             {
-                win = checkWinner(board, lastPlayedCol);
+                win = checkWinner(board);
             }
 
             SpriteBatch spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteBatch.Begin();
-            spriteBatch.DrawString(_fontLarge,"AI", new Vector2(CHIP_OFFSET_X,BOARD_SIZE_Y-CHIP_SIZE_Y), doAI ? Color.White : Color.Black);
+            spriteBatch.DrawString(_fontLarge,"AI", new Vector2(CHIP_OFFSET_X,BOARD_SIZE_Y-CHIP_SIZE_Y), aiLevel == -1 ? Color.Black : new Color((float)(aiLevel + 1) / (AI_DEPTH + 1), 1 - (float)(aiLevel + 1) / (AI_DEPTH + 1), 0));
 
             for (int i = 0; i < board.Length; i++)
             {
