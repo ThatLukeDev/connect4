@@ -128,7 +128,7 @@ namespace connect4
 
             for (int x = 0; x < board.Length; x++)
             {
-                for (int y = 0; y < 2; y++)
+                for (int y = 0; y < 3; y++)
                 {
                     int counter1 = 0;
                     int counter2 = 0;
